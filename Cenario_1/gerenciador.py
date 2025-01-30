@@ -21,7 +21,7 @@ class Gerenciador:
         self.host = host
         self.port = port
         self.atuadores = {}
-        self.temperatura_limite = 5  
+        self.temperatura_limite = 5
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(5)
@@ -37,6 +37,7 @@ class Gerenciador:
             threading.Thread(target=self.tratar_cliente, args=(client_socket,)).start()
 
     def tratar_cliente(self, client_socket):
+        repeticoes = 0 
         while True:
             try:
                 data = client_socket.recv(1024).decode('utf-8')
@@ -47,12 +48,17 @@ class Gerenciador:
                     temperatura_atual = float(data.split(":")[1])
                     print(f"Temperatura atual recebida: {temperatura_atual}°C")
 
-                    if temperatura_atual > self.temperatura_limite:
+                    if temperatura_atual >= self.temperatura_limite:
                         self.atuadores["Refrigerador"].ligar()
                         self.simular_ajuste_temperatura(client_socket)
                     else:
                         self.atuadores["Refrigerador"].desligar()
                         client_socket.send("Temperatura ideal atingida.".encode('utf-8'))
+
+                repeticoes += 1
+                if repeticoes >= 5:
+                    print("Encerrando a conexão.")
+                    break
 
             except Exception as e:
                 print(f"Erro: {e}")
