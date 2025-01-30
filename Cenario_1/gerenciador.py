@@ -3,7 +3,6 @@ import threading
 import random
 import time
 
-# Classe Atuador
 class AtuadorRefrigerador:
     def __init__(self, id_atuador):
         self.id_atuador = id_atuador
@@ -17,14 +16,12 @@ class AtuadorRefrigerador:
         self.status = 'Desligado'
         print("Refrigerador desligado. Temperatura ideal atingida.")
 
-
-# Classe Gerenciador/Servidor
 class Gerenciador:
     def __init__(self, host='localhost', port=5000):
         self.host = host
         self.port = port
         self.atuadores = {}
-        self.temperatura_limite = 5  #Temperatura ideal
+        self.temperatura_limite = 5  
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(5)
@@ -50,7 +47,6 @@ class Gerenciador:
                     temperatura_atual = float(data.split(":")[1])
                     print(f"Temperatura atual recebida: {temperatura_atual}°C")
 
-                    # Verifica a temperatura e escolhe o que vai fazer, aumentar ou baixar a temperatura
                     if temperatura_atual > self.temperatura_limite:
                         self.atuadores["Refrigerador"].ligar()
                         self.simular_ajuste_temperatura(client_socket)
@@ -76,7 +72,6 @@ class Gerenciador:
     def iniciar(self):
         self.aceitar_conexao()
 
-# Inicia o servidor
 gerenciador = Gerenciador()
 gerenciador.adicionar_atuador(AtuadorRefrigerador("Refrigerador"))
 gerenciador.iniciar()
