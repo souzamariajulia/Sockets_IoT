@@ -1,5 +1,6 @@
 import socket
 import threading
+import random 
 
 class AtuadorAlarme:
     def __init__(self, id_atuador):
@@ -15,12 +16,11 @@ class AtuadorAlarme:
         print("Alarme desligado.")
 
 class SensorEstoque:
-    def __init__(self, id_sensor, nivel_estoque_inicial):
+    def __init__(self, id_sensor):
         self.id_sensor = id_sensor
-        self.nivel_estoque = nivel_estoque_inicial 
 
     def ler_nivel_estoque(self):
-        return self.nivel_estoque
+        return random.choice([10, 30, 100])
 
 class Gerenciador:
     def __init__(self, host='localhost', port=5000):
@@ -69,7 +69,7 @@ class Gerenciador:
         self.aceitar_conexao()
 
 gerenciador = Gerenciador()
-sensor_estoque = SensorEstoque(id_sensor="SensorEstoque1", nivel_estoque_inicial=30)
+sensor_estoque = SensorEstoque(id_sensor="SensorEstoque1")
 gerenciador.adicionar_sensor(sensor_estoque)
 
 gerenciador.iniciar()
