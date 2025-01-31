@@ -10,7 +10,7 @@ class SensorPorta:
 
     def abrir_porta(self):
         self.status = "Aberta"
-        self.tempo_aberto = time.time() 
+        self.tempo_aberto = time.time()
 
     def fechar_porta(self):
         self.status = "Fechada"
@@ -22,10 +22,6 @@ class SensorPorta:
             return time.time() - self.tempo_aberto
         return 0
     
-def tocar_alarme():
-    pygame.mixer.music.load("alarme.mp3")
-    pygame.mixer.music.play()
-
 def conectar_ao_servidor():
     sensor_porta = SensorPorta(id_sensor="SensorPorta1")
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,8 +34,8 @@ def conectar_ao_servidor():
         
         if sensor_porta.status == "Aberta" and sensor_porta.tempo_abrindo() >= 30:
             print("Alarme ativado! Porta aberta por mais de 30 segundos.")
-            tocar_alarme()
-        
+            client_socket.send("PORTA:Aberta".encode('utf-8'))  # Envia para o servidor que a porta está aberta por 30 segundos
+            
         client_socket.send(f"PORTA:{sensor_porta.status}".encode('utf-8'))
 
         resposta = client_socket.recv(1024).decode('utf-8')

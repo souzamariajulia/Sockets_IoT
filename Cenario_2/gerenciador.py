@@ -7,18 +7,24 @@ class AtuadorAlarme:
     def __init__(self, id_atuador, som_alarme="alarme.mp3"):
         self.id_atuador = id_atuador
         self.status = 'Desligado'
-        pygame.mixer.init()
-        self.som_alarme = pygame.mixer.Sound(som_alarme)
+        pygame.mixer.init()  
+        self.som_alarme = som_alarme  
+        self.alarme_tocando = False  
 
     def ligar(self):
         self.status = 'Ligado'
         print("ALERTA: Porta aberta por mais de 30 segundos!")
-        self.som_alarme.play(-1)
+        if not self.alarme_tocando:
+            pygame.mixer.music.load(self.som_alarme)  
+            pygame.mixer.music.play(-1)  
+            self.alarme_tocando = True  
 
     def desligar(self):
         self.status = 'Desligado'
         print("Alarme desligado.")
-        self.som_alarme.stop()
+        if self.alarme_tocando:
+            pygame.mixer.music.stop()  
+            self.alarme_tocando = False  
 
 class Gerenciador:
     def __init__(self, host='localhost', port=5000):
@@ -59,7 +65,7 @@ class Gerenciador:
                                 client_socket.send("Alerta: Porta aberta por mais de 30 segundos.".encode('utf-8'))
                     else:
                         self.porta_aberta_tempo = 0
-                        self.atuadores["Alarme"].desligar() 
+                        self.atuadores["Alarme"].desligar()
 
             except Exception as e:
                 print(f"Erro: {e}")
